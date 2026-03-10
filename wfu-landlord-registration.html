@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Landlord Registration — Wake Forest University</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  :root {
+    --gold: #CFB53B;
+    --gold-dark: #a8921e;
+    --gold-light: #e8d57a;
+    --gold-pale: #faf6e8;
+    --black: #111111;
+    --charcoal: #2a2a2a;
+    --gray: #6b6b6b;
+    --gray-light: #e8e8e8;
+    --gray-pale: #f5f5f5;
+    --white: #ffffff;
+    --error: #b91c1c;
+    --success: #15803d;
+    --shadow: 0 2px 20px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 48px rgba(0,0,0,0.14);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--gray-pale);
+    color: var(--charcoal);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--black);
+    padding: 0;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .header-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 32px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-left {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .wfu-seal {
+    width: 44px; height: 44px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 700;
+    color: var(--black);
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+  .header-titles {}
+  .header-university {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px; color: var(--white);
+    letter-spacing: 0.2px; line-height: 1.2;
+  }
+  .header-dept {
+    font-size: 11px; color: var(--gold);
+    font-weight: 500; letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .header-badge {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    padding: 5px 14px; border-radius: 2px;
+  }
+
+  /* ── HERO BAND ── */
+  .hero {
+    background: var(--black);
+    border-bottom: 3px solid var(--gold);
+    padding: 40px 32px 36px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; color: var(--white);
+    font-weight: 700; margin-bottom: 8px;
+    letter-spacing: 0.2px;
+  }
+  .hero p {
+    font-size: 15px; color: rgba(255,255,255,0.6);
+    max-width: 520px; margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ── MAIN ── */
+  main {
+    flex: 1;
+    max-width: 760px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* ── STEPPER ── */
+  .stepper {
+    display: flex; align-items: flex-start;
+    margin-bottom: 36px;
+    position: relative;
+  }
+  .stepper::before {
+    content: '';
+    position: absolute;
+    top: 20px; left: calc(16.66% + 20px);
+    width: calc(66.66% - 40px);
+    height: 2px;
+    background: var(--gray-light);
+    z-index: 0;
+  }
+  .step {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; position: relative; z-index: 1;
+  }
+  .step-circle {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 2px solid var(--gray-light);
+    background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; color: var(--gray);
+    transition: all 0.3s ease;
+    position: relative; z-index: 2;
+  }
+  .step.active .step-circle {
+    border-color: var(--gold);
+    background: var(--gold);
+    color: var(--black);
+    box-shadow: 0 0 0 4px rgba(207,181,59,0.2);
+  }
+  .step.done .step-circle {
+    border-color: var(--black);
+    background: var(--black);
+    color: var(--gold);
+  }
+  .step-check { font-size: 16px; }
+  .step-label {
+    margin-top: 10px;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: var(--gray); text-align: center;
+  }
+  .step.active .step-label { color: var(--gold-dark); }
+  .step.done .step-label { color: var(--black); }
+
+  /* ── PROGRESS LINE ── */
+  .progress-line {
+    position: absolute;
+    top: 20px; left: calc(16.66% + 20px);
+    height: 2px;
+    background: var(--gold);
+    z-index: 1;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border-radius: 4px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    animation: fadeUp 0.35s ease both;
+    border-top: 4px solid var(--gold);
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-header {
+    padding: 28px 36px 24px;
+    border-bottom: 1px solid var(--gray-light);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .card-icon {
+    width: 44px; height: 44px;
+    background: var(--gold-pale);
+    border: 1px solid rgba(207,181,59,0.3);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; color: var(--black);
+    line-height: 1.2;
+  }
+  .card-subtitle {
+    font-size: 13px; color: var(--gray);
+    margin-top: 3px;
+  }
+
+  .card-body { padding: 32px 36px; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold-dark);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gold-pale);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: var(--gold-pale);
+  }
+
+  /* ── HELP TEXT ── */
+  .help-text {
+    font-size: 13px; color: var(--gray);
+    background: var(--gray-pale);
+    border-left: 3px solid var(--gold);
+    padding: 10px 14px;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  /* ── FORM GRID ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 24px;
+    margin-bottom: 28px;
+  }
+  .form-grid .full { grid-column: 1 / -1; }
+  .form-grid .third { grid-column: span 1; }
+
+  /* ── FIELD ── */
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--charcoal);
+  }
+  .field label .req { color: var(--gold-dark); margin-left: 2px; }
+  .field input,
+  .field select {
+    height: 44px; padding: 0 12px;
+    border: 1.5px solid var(--gray-light);
+    border-radius: 3px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px; color: var(--charcoal);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+  }
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b6b6b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px; cursor: pointer;
+  }
+  .field input:focus, .field select:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(207,181,59,0.15);
+  }
+  .field input.error, .field select.error {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(185,28,28,0.08);
+  }
+  .field .hint {
+    font-size: 12px; color: var(--gray);
+    font-style: italic; line-height: 1.4;
+  }
+  .field .err { font-size: 11px; color: var(--error); font-weight: 500; }
+  .field input::placeholder { color: #bbb; }
+
+  /* ── FOOTER ── */
+  .card-footer {
+    padding: 20px 36px 28px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid var(--gray-light);
+    gap: 12px;
+  }
+  .btn {
+    height: 46px; padding: 0 28px;
+    border-radius: 3px; border: none;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+    letter-spacing: 0.3px;
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--gray-light);
+    color: var(--gray);
+  }
+  .btn-outline:hover { border-color: var(--charcoal); color: var(--charcoal); }
+  .btn-primary {
+    background: var(--black); color: var(--gold);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .btn-primary:hover { background: var(--charcoal); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-gold {
+    background: var(--gold); color: var(--black);
+    box-shadow: 0 2px 12px rgba(207,181,59,0.35);
+  }
+  .btn-gold:hover { background: var(--gold-dark); color: var(--white); transform: translateY(-1px); }
+
+  /* ── REVIEW ── */
+  .review-block { margin-bottom: 28px; }
+  .review-block-title {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold-dark);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gray-light);
+  }
+  .review-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px 24px;
+  }
+  .review-item {}
+  .review-key {
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--gray); margin-bottom: 2px;
+  }
+  .review-val { font-size: 14px; color: var(--charcoal); }
+  .review-val.empty { color: var(--gray-light); font-style: italic; }
+
+  /* ── SUCCESS ── */
+  .success-wrap {
+    padding: 48px 36px;
+    text-align: center;
+    animation: fadeUp 0.4s ease both;
+  }
+  .success-mark {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--gold-pale);
+    border: 2px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 0 auto 24px;
+  }
+  .success-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; color: var(--black); margin-bottom: 10px;
+  }
+  .success-sub {
+    font-size: 15px; color: var(--gray);
+    line-height: 1.6; max-width: 420px; margin: 0 auto 28px;
+  }
+  .record-chips {
+    display: flex; gap: 12px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 32px;
+  }
+  .record-chip {
+    background: var(--gray-pale);
+    border: 1px solid var(--gray-light);
+    border-radius: 3px;
+    padding: 10px 20px;
+    font-size: 13px; color: var(--gray);
+  }
+  .record-chip strong { display: block; font-size: 16px; color: var(--black); margin-top: 2px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--error); color: var(--white);
+    padding: 14px 24px; border-radius: 3px;
+    font-size: 14px; font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    z-index: 9999; transition: transform 0.3s ease;
+    max-width: 440px; text-align: center;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success-toast { background: var(--success); }
+
+  /* ── SPINNER ── */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(207,181,59,0.3);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── FOOTER BAR ── */
+  footer {
+    background: var(--black);
+    border-top: 2px solid var(--gold);
+    padding: 16px 32px;
+    text-align: center;
+    font-size: 12px; color: rgba(255,255,255,0.4);
+    letter-spacing: 0.3px;
+  }
+  footer span { color: var(--gold); }
+
+  @media (max-width: 580px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid .full { grid-column: 1; }
+    .card-body, .card-footer { padding-left: 20px; padding-right: 20px; }
+    .card-header { padding: 20px; }
+    .review-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 24px; }
+    .header-inner { padding: 0 16px; }
+    .record-chips { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="wfu-seal">WFU</div>
+      <div class="header-titles">
+        <div class="header-university">Wake Forest University</div>
+        <div class="header-dept">Off-Campus Housing</div>
+      </div>
+    </div>
+    <div class="header-badge">Landlord Registration</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Landlord Registration</h1>
+  <p>Register your property with Wake Forest University's Off-Campus Housing program to connect with our students.</p>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- STEPPER -->
+  <div class="stepper" id="stepper">
+    <div class="progress-line" id="progress-line"></div>
+    <div class="step active" id="step-dot-1">
+      <div class="step-circle" id="step-circle-1">1</div>
+      <div class="step-label">Organization</div>
+    </div>
+    <div class="step" id="step-dot-2">
+      <div class="step-circle" id="step-circle-2">2</div>
+      <div class="step-label">Contact</div>
+    </div>
+    <div class="step" id="step-dot-3">
+      <div class="step-circle" id="step-circle-3">3</div>
+      <div class="step-label">Review</div>
+    </div>
+  </div>
+
+  <div id="main-card">
+
+  <!-- ═══════════════ STEP 1: ORGANIZATION ═══════════════ -->
+  <div id="panel-1" class="card">
+    <div class="card-header">
+      <div class="card-icon">🏢</div>
+      <div>
+        <div class="card-title">Organization Information</div>
+        <div class="card-subtitle">Tell us about your company or property management organization</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="section-label">Company Details</div>
+      <div class="help-text">
+        This information should be for the main company office. On the next screen you can provide a primary contact person such as a property manager or on-site staff.
+      </div>
+
+      <div class="form-grid">
+        <div class="field full">
+          <label>Company Name <span class="req">*</span></label>
+          <input type="text" id="org-name" placeholder="Acme Property Management LLC" autocomplete="organization"/>
+          <span class="hint">If you are an individual landlord without a company, please list your name here.</span>
+          <span class="err" id="err-org-name"></span>
+        </div>
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel" id="org-phone" placeholder="(336) 000-0000" autocomplete="tel"/>
+        </div>
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" id="org-email" placeholder="info@company.com" autocomplete="email"/>
+          <span class="err" id="err-org-email"></span>
+        </div>
+      </div>
+
+      <div class="section-label">Mailing Address</div>
+      <div class="form-grid">
+        <div class="field full">
+          <label>Street Address</label>
+          <input type="text" id="org-street" placeholder="123 Main Street" autocomplete="address-line1"/>
+        </div>
+        <div class="field full">
+          <label>Street Address Line 2</label>
+          <input type="text" id="org-street2" placeholder="Suite 400, Unit B, etc. (optional)" autocomplete="address-line2"/>
+        </div>
+        <div class="field">
+          <label>City</label>
+          <input type="text" id="org-city" placeholder="Winston-Salem" autocomplete="address-level2"/>
+        </div>
+        <div class="field">
+          <label>State / Province</label>
+          <input type="text" id="org-state" placeholder="NC" autocomplete="address-level1"/>
+        </div>
+        <div class="field">
+          <label>ZIP / Postal Code</label>
+          <input type="text" id="org-zip" placeholder="27109" autocomplete="postal-code"/>
+        </div>
+        <div class="field">
+          <label>Country</label>
+          <select id="org-country" autocomplete="country">
+            <option value="US">United States</option>
+            <option value="CA">Canada</option>
+            <option value="GB">United Kingdom</option>
+            <option value="AU">Australia</option>
+            <option value="NZ">New Zealand</option>
+            <option value="IE">Ireland</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+    <div class="card-footer">
+      <div></div>
+      <button class="btn btn-primary" onclick="goTo(2)">
+        Next: Contact Details
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STEP 2: CONTACT ═══════════════ -->
+  <div id="panel-2" class="card" style="display:none">
+    <div class="card-header">
+      <div class="card-icon">👤</div>
+      <div>
+        <div class="card-title">Primary Contact</div>
+        <div class="card-subtitle">The main person we should contact regarding this organization</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="section-label">Personal Details</div>
+      <div class="form-grid">
+        <div class="field" style="max-width:160px">
+          <label>Title</label>
+          <select id="ct-title" autocomplete="honorific-prefix">
+            <option value="">—</option>
+            <option value="Mr">Mr</option>
+            <option value="Mrs">Mrs</option>
+            <option value="Ms">Ms</option>
+            <option value="Dr">Dr</option>
+            <option value="Prof">Prof</option>
+          </select>
+        </div>
+        <div></div>
+        <div class="field">
+          <label>First Name <span class="req">*</span></label>
+          <input type="text" id="ct-first" placeholder="Jane" autocomplete="given-name"/>
+          <span class="err" id="err-ct-first"></span>
+        </div>
+        <div class="field">
+          <label>Last Name <span class="req">*</span></label>
+          <input type="text" id="ct-last" placeholder="Doe" autocomplete="family-name"/>
+          <span class="err" id="err-ct-last"></span>
+        </div>
+      </div>
+
+      <div class="section-label">Contact Information</div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Office Phone</label>
+          <input type="tel" id="ct-office-phone" placeholder="(336) 100-2000" autocomplete="tel"/>
+        </div>
+        <div class="field">
+          <label>Cell Phone</label>
+          <input type="tel" id="ct-cell-phone" placeholder="(336) 100-3000" autocomplete="tel"/>
+        </div>
+        <div class="field full">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" id="ct-email" placeholder="jane.doe@company.com" autocomplete="email"/>
+          <span class="hint">A confirmation email will be sent to this address.</span>
+          <span class="err" id="err-ct-email"></span>
+        </div>
+      </div>
+
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-outline" onclick="goTo(1)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <button class="btn btn-primary" onclick="goTo(3)">
+        Review & Submit
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STEP 3: REVIEW ═══════════════ -->
+  <div id="panel-3" class="card" style="display:none">
+    <div class="card-header">
+      <div class="card-icon">✅</div>
+      <div>
+        <div class="card-title">Review Your Information</div>
+        <div class="card-subtitle">Please confirm everything looks correct before submitting</div>
+      </div>
+    </div>
+    <div class="card-body" id="review-body">
+      <!-- populated by JS -->
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-outline" onclick="goTo(2)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Edit
+      </button>
+      <button class="btn btn-gold" id="submit-btn" onclick="submitForm()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+        Submit Registration
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SUCCESS ═══════════════ -->
+  <div id="panel-success" class="card" style="display:none">
+    <div class="success-wrap">
+      <div class="success-mark">✓</div>
+      <div class="success-title">Registration Complete!</div>
+      <div class="success-sub">Your landlord registration has been submitted to Wake Forest University Off-Campus Housing. A confirmation email has been sent to <strong id="success-email"></strong>.</div>
+      <div class="record-chips">
+        <div class="record-chip">
+          Organization Record
+          <strong id="result-contact-id">—</strong>
+        </div>
+        <div class="record-chip">
+          Contact Record
+          <strong id="result-entry-id">—</strong>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="resetForm()">
+        Register Another Landlord
+      </button>
+    </div>
+  </div>
+
+  </div><!-- /main-card -->
+</main>
+
+<footer>
+  &copy; 2026 <span>Wake Forest University</span> — Off-Campus Housing &nbsp;|&nbsp; housing@wfu.edu
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── CONFIG ──────────────────────────────────────────────────────
+  const STARREZ_BASE    = 'https://wfu.starrezhousing.com/StarRezREST';
+  const STARREZ_KEY     = '14c9f085-f52e-4eb3-a439-ee3a1bc3dcbe';
+  const EMAILJS_SERVICE = 'service_pkg94ui';
+  const EMAILJS_TEMPLATE= 'template_70jl0tr';
+  const EMAILJS_PUBKEY  = 'OAfz_xWl9jRvviwkv';
+
+  // StarRez enum values
+  const CONTACT_TYPE_ENUM  = 0;   // General
+  const ENTRY_STATUS_ENUM  = 100; // Landlord
+  const CATEGORY_ID        = 0;   // StarRez default
+
+  // ── INIT EMAILJS ────────────────────────────────────────────────
+  emailjs.init(EMAILJS_PUBKEY);
+
+  // ── STATE ───────────────────────────────────────────────────────
+  let currentStep = 1;
+
+  // ── HELPERS ─────────────────────────────────────────────────────
+  function v(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+  function setErr(id, msg) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = msg;
+  }
+  function markErr(id, hasErr) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('error', hasErr);
+  }
+  function showToast(msg, type = 'error') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast' + (type === 'success' ? ' success-toast' : '');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 5000);
+  }
+
+  // ── VALIDATION ──────────────────────────────────────────────────
+  function validate(step) {
+    let ok = true;
+    if (step === 1) {
+      const name = v('org-name');
+      if (!name) {
+        setErr('err-org-name', 'Company name is required.');
+        markErr('org-name', true); ok = false;
+      } else { setErr('err-org-name', ''); markErr('org-name', false); }
+
+      const email = v('org-email');
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setErr('err-org-email', 'Please enter a valid email address.');
+        markErr('org-email', true); ok = false;
+      } else { setErr('err-org-email', ''); markErr('org-email', false); }
+    }
+    if (step === 2) {
+      const first = v('ct-first');
+      if (!first) {
+        setErr('err-ct-first', 'First name is required.');
+        markErr('ct-first', true); ok = false;
+      } else { setErr('err-ct-first', ''); markErr('ct-first', false); }
+
+      const last = v('ct-last');
+      if (!last) {
+        setErr('err-ct-last', 'Last name is required.');
+        markErr('ct-last', true); ok = false;
+      } else { setErr('err-ct-last', ''); markErr('ct-last', false); }
+
+      const email = v('ct-email');
+      if (!email) {
+        setErr('err-ct-email', 'Email is required to send your confirmation.');
+        markErr('ct-email', true); ok = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setErr('err-ct-email', 'Please enter a valid email address.');
+        markErr('ct-email', true); ok = false;
+      } else { setErr('err-ct-email', ''); markErr('ct-email', false); }
+    }
+    return ok;
+  }
+
+  // ── STEPPER ─────────────────────────────────────────────────────
+  function updateStepper(step) {
+    for (let i = 1; i <= 3; i++) {
+      const dot = document.getElementById('step-dot-' + i);
+      const circle = document.getElementById('step-circle-' + i);
+      dot.classList.remove('active', 'done');
+      if (i < step) {
+        dot.classList.add('done');
+        circle.innerHTML = '<span class="step-check">✓</span>';
+      } else if (i === step) {
+        dot.classList.add('active');
+        circle.textContent = i;
+      } else {
+        circle.textContent = i;
+      }
+    }
+    // Progress line
+    const pct = step === 1 ? 0 : step === 2 ? 50 : 100;
+    document.getElementById('progress-line').style.width = pct + '%';
+  }
+
+  // ── NAVIGATION ──────────────────────────────────────────────────
+  function goTo(step) {
+    if (step > currentStep && !validate(currentStep)) return;
+    document.getElementById('panel-' + currentStep).style.display = 'none';
+    document.getElementById('panel-' + step).style.display = 'block';
+    // Re-animate
+    const card = document.getElementById('panel-' + step);
+    card.style.animation = 'none';
+    card.offsetHeight; // reflow
+    card.style.animation = '';
+    updateStepper(step);
+    currentStep = step;
+    if (step === 3) buildReview();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── REVIEW ──────────────────────────────────────────────────────
+  function ri(label, val) {
+    return `<div class="review-item">
+      <div class="review-key">${label}</div>
+      <div class="review-val ${val ? '' : 'empty'}">${val || '—'}</div>
+    </div>`;
+  }
+  function buildReview() {
+    const countryEl = document.getElementById('org-country');
+    const countryText = countryEl.options[countryEl.selectedIndex].text;
+    const addr = [v('org-street'), v('org-street2'), v('org-city'),
+                  v('org-state'), v('org-zip'), countryText]
+                  .filter(Boolean).join(', ');
+
+    document.getElementById('review-body').innerHTML = `
+      <div class="review-block">
+        <div class="review-block-title">Organization</div>
+        <div class="review-grid">
+          ${ri('Company Name', v('org-name'))}
+          ${ri('Phone', v('org-phone'))}
+          ${ri('Email', v('org-email'))}
+          ${ri('Street', v('org-street'))}
+          ${ri('Street 2', v('org-street2'))}
+          ${ri('City', v('org-city'))}
+          ${ri('State', v('org-state'))}
+          ${ri('ZIP', v('org-zip'))}
+          ${ri('Country', countryText)}
+        </div>
+      </div>
+      <div class="review-block">
+        <div class="review-block-title">Primary Contact</div>
+        <div class="review-grid">
+          ${ri('Title', v('ct-title'))}
+          ${ri('First Name', v('ct-first'))}
+          ${ri('Last Name', v('ct-last'))}
+          ${ri('Office Phone', v('ct-office-phone'))}
+          ${ri('Cell Phone', v('ct-cell-phone'))}
+          ${ri('Email', v('ct-email'))}
+        </div>
+      </div>`;
+  }
+
+  // ── STARREZ API ─────────────────────────────────────────────────
+  async function starrezPost(endpoint, payload) {
+    const res = await fetch(`${STARREZ_BASE}/${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'StarRezAPIKey': STARREZ_KEY,
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      let msg = `HTTP ${res.status}`;
+      try { const b = await res.json(); msg = b?.Message || b?.message || msg; } catch(_){}
+      throw new Error(msg);
+    }
+    return res.json();
+  }
+
+  // ── SUBMIT ──────────────────────────────────────────────────────
+  async function submitForm() {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Submitting…';
+
+    try {
+      // ── CALL 1: Create Organization (Contact table) ──
+      const orgPayload = {
+        Description:     v('org-name'),
+        Phone:           v('org-phone')         || undefined,
+        Email:           v('org-email')          || undefined,
+        Street:          v('org-street')         || undefined,
+        Street2:         v('org-street2')        || undefined,
+        City:            v('org-city')           || undefined,
+        StateProvince:   v('org-state')          || undefined,
+        ZipPostcode:     v('org-zip')            || undefined,
+        CountryID:       v('org-country')        || undefined,
+        CategoryID:      CATEGORY_ID,
+        ContactTypeEnum: CONTACT_TYPE_ENUM,
+      };
+      // Remove undefined keys
+      Object.keys(orgPayload).forEach(k => orgPayload[k] === undefined && delete orgPayload[k]);
+
+      const orgResult = await starrezPost('contact/Contact', orgPayload);
+      const contactId = orgResult?.ContactID || orgResult?.contactID || orgResult?.ID;
+
+      // ── CALL 2: Create Individual Entry (Entry table) ──
+      const entryPayload = {
+        NameLast:        v('ct-last'),
+        NameFirst:       v('ct-first')           || undefined,
+        NameTitle:       v('ct-title')           || undefined,
+        PortalEmail:     v('ct-email')           || undefined,
+        Position:        'Landlord',
+        EntryStatusEnum: ENTRY_STATUS_ENUM,
+        ContactID:       contactId               || undefined,
+      };
+      Object.keys(entryPayload).forEach(k => entryPayload[k] === undefined && delete entryPayload[k]);
+
+      const entryResult = await starrezPost('entry/Entry', entryPayload);
+      const entryId = entryResult?.EntryID || entryResult?.entryID || entryResult?.ID;
+
+      // ── EMAILJS CONFIRMATION ──
+      const countryEl = document.getElementById('org-country');
+      const countryText = countryEl.options[countryEl.selectedIndex].text;
+
+      await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
+        to_email:             v('ct-email'),
+        contact_name:         `${v('ct-title')} ${v('ct-first')} ${v('ct-last')}`.trim(),
+        org_name:             v('org-name'),
+        org_phone:            v('org-phone')       || 'Not provided',
+        org_email:            v('org-email')       || 'Not provided',
+        org_address:          [v('org-street'), v('org-street2')].filter(Boolean).join(', ') || 'Not provided',
+        org_city:             v('org-city')        || 'Not provided',
+        org_state:            v('org-state')       || 'Not provided',
+        org_zip:              v('org-zip')         || 'Not provided',
+        org_country:          countryText,
+        contact_office_phone: v('ct-office-phone') || 'Not provided',
+        contact_cell_phone:   v('ct-cell-phone')   || 'Not provided',
+      });
+
+      // ── SUCCESS ──
+      document.getElementById('panel-3').style.display = 'none';
+      document.getElementById('panel-success').style.display = 'block';
+      document.getElementById('success-email').textContent = v('ct-email');
+      document.getElementById('result-contact-id').textContent = contactId || 'Created';
+      document.getElementById('result-entry-id').textContent = entryId || 'Created';
+
+      updateStepper(4); // all done
+
+    } catch (err) {
+      showToast('Submission failed: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg> Submit Registration`;
+    }
+  }
+
+  // ── RESET ────────────────────────────────────────────────────────
+  function resetForm() {
+    ['org-name','org-phone','org-email','org-street','org-street2',
+     'org-city','org-state','org-zip','ct-first','ct-last',
+     'ct-office-phone','ct-cell-phone','ct-email','ct-title'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.value = ''; el.classList.remove('error'); }
+    });
+    document.getElementById('org-country').value = 'US';
+    document.getElementById('panel-success').style.display = 'none';
+    document.getElementById('panel-1').style.display = 'block';
+    currentStep = 1;
+    updateStepper(1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
